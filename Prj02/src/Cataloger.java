@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,10 +22,10 @@ public class Cataloger {
 
 	public static void main(String[] args) {
 		// проверить что есть два элемента в массиве
-		String[] args1 = { "D:\\dir1", ".mp3" };
-		File file = new File(args1[0]);
-		String extension = args1[1].toLowerCase();
-		HTMLGenerator htmlGenerator = new HTMLGenerator(args1[0]);
+		//String[] args1 = { "D:\\dir1", ".mp3" };
+		File file = new File(args[0]);
+		String extension = args[1].toLowerCase();
+		
 
 		if (file.exists() && file.isDirectory()) {
 			List<File> listOfMP3 = new ArrayList<File>();
@@ -56,7 +57,50 @@ public class Cataloger {
 			
 // сортировка списка по исполнителю а затем по альбому			
 			sortMP3FileDescription(listMP3FilesDescription);
+			
 // содание html файла
+			
+			File outHTML =  new File(args[0]);
+			
+			String HTM_DOC_STARTING = "<!DOCTYPE html>\r\n" + 
+					"<html lang=\"ru\">\r\n" + 
+					"<head>\r\n" + 
+					"    <title>List of music</title>\r\n" + 
+					"</head>\r\n" + 
+					"<body>\r\n";
+			String HTM_DOC_ENDING = "</body>\r\n" + 
+					"</html>";
+			
+			FileWriter writer;
+			try {
+				writer = new FileWriter((outHTML+"\\myMusic.html"), false);
+				writer.write(HTM_DOC_STARTING);
+				writer.write("<ul>");
+				for(int i = 0; i < listMP3FilesDescription.size(); i++)
+				{
+					writer.write("<li>" + listMP3FilesDescription.get(i).getArtist() + "\r\n" + 
+							"				<ul>\r\n" + 
+							"					<li>" + listMP3FilesDescription.get(i).getAlbum() +"\r\n" + 
+							"						<ul>\r\n" + 
+							"							<li>" + listMP3FilesDescription.get(i).getName() + "_" + listMP3FilesDescription.get(i).getDuration() + "_(<a href=\"file:///" + listMP3FilesDescription.get(i).getAbsoluteLocaition() + "\">" + listMP3FilesDescription.get(i).getName() + "</a>)</li>\r\n" + 
+							"						</ul>\r\n" + 
+							"					</li>\r\n" + 
+							"				</ul>\r\n" + 
+							"			</li>");
+				}
+				writer.write("</ul>");
+				writer.write(HTM_DOC_ENDING);
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+				
+				
+				
+			
+			
 			
 			
 			for(int i=0; i<listMP3FilesDescription.size(); i++) {
@@ -64,7 +108,7 @@ public class Cataloger {
 			}
 
 		} else {
-			System.out.println("Catalog " + args1[0] + " does not exist. \n "
+			System.out.println("Catalog " + args[0] + " does not exist. \n "
 					+ "Make sure, that you entered right directory and try again, please");
 		}
 
